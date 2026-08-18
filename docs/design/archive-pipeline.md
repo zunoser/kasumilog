@@ -456,6 +456,8 @@ Implementation is not complete until tests prove:
 - a corrupted CAS object fails read verification;
 - no fetch manifest is committed before its body object;
 - repeated/cyclic cursors end `partial` without advancing coverage;
+- a scheduled `partial` result fails the workflow after all raw data and the
+  run manifest are durably pushed, making stalled coverage visible in Actions;
 - a fresh Action run reconstructs its frontier and minimum next-request time
   from committed archive manifests;
 - incomplete list snapshots cannot produce removals;

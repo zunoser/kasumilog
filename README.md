@@ -309,6 +309,7 @@ bounded live runを2回検証済みです。Twitterリスト変更はローカ�
 - raw保存、Git push、clean clone readback検証の完了前にJSON解析結果や次cursorを使わない
 - GraphQL errors、decode error、その他4xxはraw保存後に停止
 - page/request/item/wall-clock上限では`partial`となりfrontierを更新しない
+- scheduled workflowでは`partial`もfailureにして、未完了収集をgreen runとして隠さない
 
 初回に過去全件を自動取得する経路はありません。古い固定表示投稿が混ざっても、それだけで
 `bootstrapFrom`到達と判定しないようtimeline entry末尾を境界に使います。

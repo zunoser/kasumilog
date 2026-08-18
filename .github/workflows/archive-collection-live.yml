@@ -109,7 +109,8 @@ jobs:
             --json)"
           printf '%s\n' "$result"
           if [[ "$(jq -r '.status' <<<"$result")" == "partial" ]]; then
-            echo "::warning::Collection is partial; coverage frontier was not advanced"
+            echo "::error::Collection is partial; coverage frontier was not advanced"
+            exit 1
           fi
 
       - name: Remove ephemeral Git credentials

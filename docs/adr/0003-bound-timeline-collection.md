@@ -64,6 +64,9 @@ can expire and must not become the archive's durable frontier.
 - The 8-page/600-post ceiling was adopted after the first incremental run to
   tolerate hourly bursts. Frontier early return keeps normal runs at one page;
   pacing and the ten-minute wall-clock limit are unchanged.
+- Scheduled `partial` runs fail the workflow only after their raw responses and
+  run manifest are committed, so coverage stalls are visible without losing
+  captured evidence.
 
 ## References
 
