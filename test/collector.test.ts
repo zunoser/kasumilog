@@ -39,6 +39,13 @@ const relayCatalog = createRelayRequestCatalog([
 
 const exec = promisify(execFile);
 
+test("default collection budget tolerates an hourly burst", () => {
+  assert.equal(DEFAULT_COLLECTION_LIMITS.maxTimelinePages, 8);
+  assert.equal(DEFAULT_COLLECTION_LIMITS.maxRequests, 12);
+  assert.equal(DEFAULT_COLLECTION_LIMITS.maxItems, 600);
+  assert.equal(DEFAULT_COLLECTION_LIMITS.maxRunMs, 10 * 60_000);
+});
+
 async function git(cwd: string, ...args: string[]): Promise<string> {
   return (await exec("git", args, { cwd })).stdout.trim();
 }

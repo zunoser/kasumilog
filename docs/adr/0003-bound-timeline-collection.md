@@ -17,7 +17,7 @@ can expire and must not become the archive's durable frontier.
 - On the first run, collect only one useful head page by default. Historical
   collection requires an explicit `bootstrapFrom` in a manual run. The initial
   live CLI/workflow does not expose this historical mode.
-- Bound every run to three timeline pages, eight requests, 200 unique posts,
+- Bound every run to eight timeline pages, 12 requests, 600 unique posts,
   ten minutes, and three attempts per logical page by default.
 - Retry network/timeouts and HTTP 408, 429, 500, 502, 503, and 504 only.
   Respect `Retry-After` delay-seconds or HTTP-date and rate-limit reset. Without
@@ -61,6 +61,9 @@ can expire and must not become the archive's durable frontier.
   concurrency group.
 - Any increase to limits or decrease to pacing requires an ADR update and a
   review of recent raw rate-limit manifests.
+- The 8-page/600-post ceiling was adopted after the first incremental run to
+  tolerate hourly bursts. Frontier early return keeps normal runs at one page;
+  pacing and the ten-minute wall-clock limit are unchanged.
 
 ## References
 

@@ -45,9 +45,9 @@ export interface CollectionLimits {
 }
 
 export const DEFAULT_COLLECTION_LIMITS: CollectionLimits = {
-  maxTimelinePages: 3,
-  maxRequests: 8,
-  maxItems: 200,
+  maxTimelinePages: 8,
+  maxRequests: 12,
+  maxItems: 600,
   maxRunMs: 10 * 60_000,
   maxAttemptsPerPage: 3,
   minimumIntervalMs: 30_000,

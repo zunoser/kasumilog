@@ -297,7 +297,8 @@ bounded live runを2回検証済みです。Twitterリスト変更はローカ�
 
 - 初回は設定なしなら最新の有効な1ページだけをseedとして保存
 - collector内部には有限な`bootstrapFrom`境界があるが、初回live CLI/workflowには公開しない
-- 既定上限はtimeline 3ページ、8request、200投稿、10分
+- 既定上限はtimeline 8ページ、12request、600投稿、10分
+- 通常は前回frontierへ到達した時点で終了するため、上限引き上げは平常時のrequest数を増やさない
 - cursorは同一run内だけで使用し、毎run timeline headから開始
 - 2回目以降は前回frontierの既知tweet IDを再観測するか、その時刻より古い通常投稿まで
   通過した時点でoverlap成立として停止

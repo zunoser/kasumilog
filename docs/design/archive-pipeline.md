@@ -372,7 +372,7 @@ The Action is authoritative for collection control:
 - no immediate retry for decode errors or other 4xx responses;
 - bounded page, attempt, and wall-clock budgets.
 
-Defaults are three timeline pages, eight total requests, 200 unique posts, ten
+Defaults are eight timeline pages, 12 total requests, 600 unique posts, ten
 minutes, and three attempts per logical page. Retry without a server deadline
 uses capped exponential full jitter with a 60-second base and 15-minute cap.
 `Retry-After` accepts both delay-seconds and HTTP-date. A zero remaining count
