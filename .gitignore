@@ -1,0 +1,9 @@
+# Raw responses under data/raw are intentionally committed on the private
+# archive branch. Local projections remain disposable.
+data/normalized/
+data/exports/
+state/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+${XDG_CACHE_HOME}/

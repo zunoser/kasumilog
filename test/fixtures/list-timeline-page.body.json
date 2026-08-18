@@ -1,0 +1,33 @@
+{
+  "data": {
+    "list": {
+      "tweets_timeline": {
+        "timeline": {
+          "instructions": [
+            {
+              "type": "TimelineAddEntries",
+              "entries": [
+                {
+                  "entryId": "tweet-123",
+                  "content": {
+                    "itemContent": {
+                      "tweet_results": {
+                        "result": {
+                          "rest_id": "123",
+                          "legacy": {
+                            "created_at": "Mon Aug 18 00:00:00 +0000 2026",
+                            "full_text": "fixture"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  }
+}

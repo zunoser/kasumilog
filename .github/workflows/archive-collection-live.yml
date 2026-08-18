@@ -1,0 +1,117 @@
+name: Archive bounded timeline collection
+
+on:
+  workflow_dispatch:
+
+env:
+  REQUEST_CATALOG_REVISION: a4d8b5f92874f593272e3c61427c61754cde6103
+  REQUEST_CATALOG_SHA256: 683a5951263e501ae02b8f6244ff0660d6b641cc0be9845741cb785881391311
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kasumilog-relay-collection
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    name: Collect one bounded timeline walk
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-24.04
+    environment: archive-collection-live
+    timeout-minutes: 20
+    permissions:
+      contents: write # Appends raw objects/manifests to the protected archive branch.
+    steps:
+      - name: Check out the reviewed collector source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ github.sha }}
+          path: source
+          persist-credentials: false
+
+      - name: Check out the protected archive branch
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: archive
+          path: archive-worktree
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Download the immutable request catalog revision
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --proto '=https' --tlsv1.2 \
+            --output "$RUNNER_TEMP/requests.ndjson" \
+            "https://raw.githubusercontent.com/fa0311/twitter_api_safe_relay_skills/$REQUEST_CATALOG_REVISION/skills/twitter-api-relay/requests.ndjson"
+          printf '%s  %s\n' "$REQUEST_CATALOG_SHA256" "$RUNNER_TEMP/requests.ndjson" \
+            | sha256sum --check --strict
+
+      - name: Verify the trusted collector before private network access
+        working-directory: source
+        run: node --experimental-strip-types --test
+
+      - name: Build the sanitized execution plan
+        working-directory: source
+        env:
+          LIST_ID: ${{ vars.TWITTER_ARCHIVE_LIST_ID }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$LIST_ID" ]]; then
+            echo "TWITTER_ARCHIVE_LIST_ID is not configured" >&2
+            exit 2
+          fi
+          node --experimental-strip-types src/cli.ts plan-timeline \
+            --request-catalog "$RUNNER_TEMP/requests.ndjson" \
+            --revision "$REQUEST_CATALOG_REVISION" \
+            --profile account2 \
+            --list-id "$LIST_ID" \
+            --json
+
+      - name: Join the existing tailnet
+        uses: tailscale/github-action@306e68a486fd2350f2bfc3b19fcd143891a4a2d8 # v4.1.2
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+          ping: tw.home.yutakobayashi.com
+
+      - name: Configure ephemeral archive Git credentials
+        working-directory: archive-worktree
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          gh auth setup-git
+
+      - name: Collect and verify one bounded walk
+        env:
+          GH_TOKEN: ${{ github.token }}
+          LIST_ID: ${{ vars.TWITTER_ARCHIVE_LIST_ID }}
+        run: |
+          set -euo pipefail
+          result="$(node --experimental-strip-types source/src/cli.ts collect-timeline \
+            --request-catalog "$RUNNER_TEMP/requests.ndjson" \
+            --revision "$REQUEST_CATALOG_REVISION" \
+            --request-catalog-sha256 "$REQUEST_CATALOG_SHA256" \
+            --profile account2 \
+            --list-id "$LIST_ID" \
+            --repository "$GITHUB_WORKSPACE/archive-worktree" \
+            --branch archive \
+            --remote origin \
+            --json)"
+          printf '%s\n' "$result"
+          if [[ "$(jq -r '.status' <<<"$result")" == "partial" ]]; then
+            echo "::warning::Collection is partial; coverage frontier was not advanced"
+          fi
+
+      - name: Remove ephemeral Git credentials
+        if: always()
+        run: |
+          git config --global --unset-all credential.https://github.com.helper || true
+          git config --global --unset-all credential.https://gist.github.com.helper || true

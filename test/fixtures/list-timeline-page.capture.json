@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "capture": {
+    "fetchId": "fixture-fetch-1",
+    "runId": "fixture-run-1",
+    "page": 0,
+    "attempt": 1,
+    "listId": "fixture-list-1",
+    "catalogRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "listRevision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "requestedAt": "2026-08-18T00:00:00.000Z",
+    "receivedAt": "2026-08-18T00:00:01.000Z",
+    "request": {
+      "operation": "ListLatestTweetsTimeline",
+      "profileName": "fixture",
+      "requestCatalog": {
+        "source": "https://github.com/fa0311/twitter_api_safe_relay_skills/blob/main/skills/twitter-api-relay/requests.ndjson",
+        "revision": "0000000000000000000000000000000000000000",
+        "contentSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "overridesSha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      },
+      "requestTemplateSha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "variablesSha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "set-cookie": "fixture-secret-must-not-persist"
+      },
+      "bodyFile": "list-timeline-page.body.json"
+    }
+  },
+  "run": {
+    "status": "complete",
+    "stopReason": "exhausted",
+    "startedAt": "2026-08-18T00:00:00.000Z",
+    "finishedAt": "2026-08-18T00:00:02.000Z",
+    "coverageFrontier": {
+      "publishedAt": "2026-08-18T00:00:00.000Z",
+      "tweetIds": ["123"]
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "kasumilog",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "kasumilog": "./src/cli.ts"
+  },
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "test": "node --experimental-strip-types --test",
+    "collect:fixture": "node --experimental-strip-types src/cli.ts collect-fixture",
+    "collect:timeline": "node --experimental-strip-types src/cli.ts collect-timeline",
+    "plan:timeline": "node --experimental-strip-types src/cli.ts plan-timeline",
+    "list:sync-members": "node --experimental-strip-types scripts/sync-list-members.ts",
+    "search:rebuild": "node --experimental-strip-types src/cli.ts rebuild-search",
+    "search": "node --experimental-strip-types src/cli.ts search"
+  }
+}
