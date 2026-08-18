@@ -55,8 +55,10 @@ can expire and must not become the archive's durable frontier.
 - Fake-clock tests verify actual request start times, Retry-After formats,
   rate-limit reset, retry classification, finite limits, cursor repetition,
   frontier overlap, and persist-before-next ordering.
-- The live workflow is manual-only and remains unexecuted until its Environment,
-  archive branch, and one-page run are explicitly reviewed.
+- After one initial and one incremental manual run were verified, the live
+  workflow runs hourly at minute 17 and remains manually dispatchable. Both
+  paths retain the same finite limits, pacing, default-branch guard, and static
+  concurrency group.
 - Any increase to limits or decrease to pacing requires an ADR update and a
   review of recent raw rate-limit manifests.
 

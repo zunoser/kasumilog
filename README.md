@@ -259,9 +259,9 @@ GitHub Actions
                                       └─ 各利用者がSQLite + FTSをローカル構築
 ```
 
-- live収集は現在`workflow_dispatch`だけを受け付け、pull requestやscheduleにはTailscale secretを渡さない
+- live収集は毎時17分の`schedule`と手動`workflow_dispatch`だけを受け付け、pull requestにはTailscale secretを渡さない
 - `TS_OAUTH_CLIENT_ID`と`TS_OAUTH_SECRET`はrepository secretではなく、`archive-collection-live` Environmentに置く
-- 現在のGitHub billing planはprivate repositoryのrequired reviewer、Environment branch policy、branch protectionを提供しないため、live workflowは`workflow_dispatch`とdefault-branch ref guardで制限する。より強いgateを用意するまでlive収集は実行しない
+- 現在のGitHub billing planはprivate repositoryのrequired reviewer、Environment branch policy、branch protectionを提供しないため、live workflowはdefault-branch ref guard、限定trigger、static concurrencyで制限する
 - `TWITTER_ARCHIVE_LIST_ID`も同Environmentのvariableとして設定する
 - dotnixで宣言管理するkasumilog専用OAuth client、`tag:ci`、split DNSを使って実行ごとのephemeral nodeを作る
 - runnerは既存の`https://tw.home.yutakobayashi.com`へ直接接続し、新しい宅内forwarderやspoolを追加しない
@@ -285,15 +285,15 @@ GitHub Actions
 `archive-collection-plan.yml`はsanitize済みの実行計画を作るだけです。Tailscaleや
 Environment secretsへアクセスせず、レビュー済みrequest catalog revisionとSHA-256を固定します。
 `archive-collection-live.yml`はdefault branch ref guard、Environment secret分離、static concurrencyの下で、
-trusted sourceと`archive` worktreeを分離してmanual収集できます。組み込み`GITHUB_TOKEN`の
-`contents: write`はarchiveへのappend pushに使い、Git設定と収集stepだけで`GH_TOKEN`として参照します。このworkflowはまだ
-実行しておらず、scheduleもありません。Twitterリスト変更はローカルのexact syncで実行済みですが、
+trusted sourceと`archive` worktreeを分離して毎時または手動で収集します。組み込み`GITHUB_TOKEN`の
+`contents: write`はarchiveへのappend pushに使い、Git設定と収集stepだけで`GH_TOKEN`として参照します。このworkflowは
+bounded live runを2回検証済みです。Twitterリスト変更はローカルのexact syncで実行済みですが、
 変更を送信するGitHub Actions workflowはありません。
 ローカルFTSはPOCとして実装済みで、raw schema対応や性能は実データを見て拡張します。
 
 ### 収集pagination・pacing・backoff
 
-`src/collector.ts`とmanual workflowに実装済みですが、workflowはまだ実行していません。
+`src/collector.ts`とscheduled workflowに実装済みです。
 
 - 初回は設定なしなら最新の有効な1ページだけをseedとして保存
 - collector内部には有限な`bootstrapFrom`境界があるが、初回live CLI/workflowには公開しない

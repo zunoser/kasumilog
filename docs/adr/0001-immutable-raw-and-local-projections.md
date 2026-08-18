@@ -137,9 +137,9 @@ routes outside the collector allowlist. That trust is accepted for this direct
 topology: Tailscale secrets are available only to trusted default-branch
 workflows through an `archive-collection-live` GitHub Environment. The current
 private-repository billing plan does not provide Environment branch policies,
-required reviewers, or branch protection, so `workflow_dispatch` and the
-default-branch ref guard are the available in-repository checks and live
-collection remains disabled pending a stronger gate. The OAuth values are not
+required reviewers, or branch protection, so the hourly schedule, manual
+dispatch, default-branch ref guard, and static concurrency are the available
+in-repository checks. The OAuth values are not
 duplicated as repository-level secrets and are never available to pull-request
 code. Twitter mutations remain absent from live collection code and use a
 separate, explicitly invoked exact-sync CLI.

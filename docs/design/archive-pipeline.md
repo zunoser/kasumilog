@@ -49,7 +49,7 @@ history. The repository therefore has these rules:
 - `main` contains code and the catalog;
 - dedicated `archive` contains append-only `data/raw` history;
 - Actions execute trusted default-branch code only;
-- live collection currently has only a `workflow_dispatch` trigger;
+- live collection has only an hourly `schedule` and `workflow_dispatch` trigger;
 - pull-request code never receives the Tailscale identity or write token;
 - Tailscale OAuth and archive push secrets live only in the
   `archive-collection-live` Environment;
@@ -69,10 +69,11 @@ home process, forwarder, spool, cursor, or archive state.
 The current tailnet identity can reach the complete Relay; Tailscale does not
 enforce an HTTP path or GraphQL operation allowlist. Therefore only trusted
 default-branch workflows receive the Tailscale secrets. The workflow checks its
-ref and accepts only `workflow_dispatch`. The current GitHub billing plan does
-not provide required reviewers, Environment branch policies, or branch
-protection for this private repository, so live collection remains disabled
-until a stronger external gate or a supporting plan is available. The OAuth
+ref and accepts only the hourly `schedule` or `workflow_dispatch`. The current
+GitHub billing plan does not provide required reviewers, Environment branch
+policies, or branch protection for this private repository, so the
+default-branch guard, limited triggers, static concurrency, and read-only Relay
+client are the active controls. The OAuth
 values must not also exist as repository-level secrets. Pull-request code
 receives neither.
 
@@ -357,9 +358,9 @@ The Action is authoritative for collection control:
 - one Relay request in flight globally;
 - 30 seconds plus zero to 15 seconds jitter after every response;
 - workflow concurrency permits only one collector;
-- live collection is manual-only, reads secrets from the
-  `archive-collection-live` Environment, and has no schedule or pull-request
-  trigger;
+- live collection runs at minute 17 each hour or by manual dispatch, reads
+  secrets from the `archive-collection-live` Environment, and has no
+  pull-request trigger;
 - trusted source and the dedicated `archive` branch use separate checkouts;
 - the collection job grants its built-in `GITHUB_TOKEN` `contents: write` for
   append-only archive pushes. It is exposed as `GH_TOKEN` only to Git setup and
@@ -466,15 +467,14 @@ Implementation is not complete until tests prove:
 ## 13. Remaining implementation order
 
 1. Configure an independent backup for the real private `archive` branch.
-2. Add a live-execution gate outside the unsupported private-repository
-   Environment and branch-protection features, or move to a supporting plan.
-3. Manually run the implemented workflow against one head page,
-   then inspect committed fetch/run manifests before adding any schedule.
+2. Monitor hourly runs and archive growth before changing cadence or limits.
+3. Add a stronger live-execution gate if the repository moves to a GitHub plan
+   that supports private-repository Environment policies.
 4. Exercise the local FTS POC against the first real raw archive
    and optimize only if measurements require it.
 Twitter-list reconciliation is implemented separately and has been exercised
-against the private `account2` list. No real archive-branch commit, workflow
-dispatch, or timeline collection has been performed yet.
+against the private `account2` list. Initial and incremental live runs have
+both completed and their raw response, fetch, and run manifests were verified.
 
 ## References
 
