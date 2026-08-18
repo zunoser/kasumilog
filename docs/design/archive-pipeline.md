@@ -472,11 +472,13 @@ Implementation is not complete until tests prove:
 2. Monitor hourly runs and archive growth before changing cadence or limits.
 3. Add a stronger live-execution gate if the repository moves to a GitHub plan
    that supports private-repository Environment policies.
-4. Exercise the local FTS POC against the first real raw archive
+4. Repeat the local FTS benchmark after enough scheduled raw data accumulates,
    and optimize only if measurements require it.
 Twitter-list reconciliation is implemented separately and has been exercised
 against the private `account2` list. Initial and incremental live runs have
 both completed and their raw response, fetch, and run manifests were verified.
+The first real raw archive also rebuilt into 93 disposable search rows; Japanese
+trigram, short-term fallback, and keyset pagination were exercised successfully.
 
 ## References
 

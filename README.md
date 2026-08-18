@@ -289,7 +289,8 @@ trusted sourceと`archive` worktreeを分離して毎時または手動で収集
 `contents: write`はarchiveへのappend pushに使い、Git設定と収集stepだけで`GH_TOKEN`として参照します。このworkflowは
 bounded live runを2回検証済みです。Twitterリスト変更はローカルのexact syncで実行済みですが、
 変更を送信するGitHub Actions workflowはありません。
-ローカルFTSはPOCとして実装済みで、raw schema対応や性能は実データを見て拡張します。
+ローカルFTSはPOCとして実装済みです。2026-08-18の実archiveから93投稿を再構築し、
+日本語trigram、短語fallback、keyset paginationを検証済みです。
 
 ### 収集pagination・pacing・backoff
 
