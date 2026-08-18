@@ -153,6 +153,16 @@ test("personal accounts require an explicit domain", () => {
   );
 });
 
+test("catalog personal accounts may define a default domain", () => {
+  const metadata = createPostMetadata(catalog, {
+    publisher: "twitter:218434058",
+    publishedAt: "2026-08-18T00:00:00Z",
+  });
+
+  assert.equal(metadata.domain, "politics");
+  assert.equal(metadata.classifiedBy, "account");
+});
+
 test("invalid references and overlapping role assignments are rejected", () => {
   assert.throws(
     () =>

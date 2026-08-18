@@ -56,6 +56,7 @@ export interface Account {
   readonly twitterId: string;
   readonly handle: `@${string}`;
   readonly displayName: string;
+  readonly defaultDomain?: Domain;
   readonly subjects: readonly AccountSubjectLink[];
   readonly status: AccountStatus;
   readonly verifiedAt: string;
@@ -194,11 +195,11 @@ export function createPostMetadata(
     }
   }
 
-  if (!input.domain && !role && !organization) {
+  if (!input.domain && !account.defaultDomain && !role && !organization) {
     throw new Error(`Personal publishers require a manual domain: ${account.id}`);
   }
 
-  const domain = input.domain ?? role?.domain ?? organization?.domain;
+  const domain = input.domain ?? role?.domain ?? organization?.domain ?? account.defaultDomain;
   if (!domain) {
     throw new Error(`Unable to classify post: ${account.id}`);
   }

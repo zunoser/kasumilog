@@ -143,6 +143,7 @@ npm run list:sync-members -- /path/to/requests.ndjson
 - tweet IDで重複排除
 - `firstCollectedAt`と`lastCollectedAt`を保持
 - カタログ登録済みpublisherには既存の投稿メタデータを付与
+- personal accountはカタログでレビューした`defaultDomain`（例: `politics`）で自動分類
 - カタログ外publisherも捨てず、未分類のまま保存
 - リポスト元は`repostOf`、引用元は`quoteOf`として別に保存
 - リポスト元をタイムライン上のpublisherで上書きしない

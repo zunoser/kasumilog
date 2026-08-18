@@ -68,6 +68,7 @@ const personalAccount = (
   twitterId,
   handle,
   displayName,
+  defaultDomain: "politics",
   subjects: [
     { relation: "publisher", subject: { kind: "person", id: personId } },
     { relation: "personal", subject: { kind: "person", id: personId } },
