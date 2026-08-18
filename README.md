@@ -2,8 +2,8 @@
 
 霞が関関連のTwitter投稿を、アカウントと発信主体を混同せずに扱うためのカタログと
 private rawアーカイブ基盤です。現在はカタログ、分類モデル、リスト差分、Relayリクエスト生成、
-完全raw保存、fixtureのGit往復検証、承認付きmanual収集workflowまでを実装しています。
-実Twitter取得や書き込みはまだ行っていません。rawから毎回再生成するローカルSQLite/FTS検索POCもあります。
+完全raw保存、Git往復検証、定期live収集workflowまでを実装しています。
+非公開リストのexact syncとbounded live収集を検証済みです。rawから毎回再生成するローカルSQLite/FTS検索POCもあります。
 
 ## モデル
 
@@ -65,8 +65,8 @@ Twitter内部ID、`active` / `inactive` の状態、最終確認日 `verifiedAt`
 - 原子力規制委員会
 
 実験用profile `account2`では、2026-08-18に非公開リスト`kasumilog`を作成し、
-activeカタログ29件とのexact syncと完全一致検証まで行いました。timeline収集workflowは
-まだ実行していません。
+activeカタログ29件とのexact syncと完全一致検証まで行いました。timeline収集workflowも
+bounded live runを検証し、毎時17分に定期実行しています。
 
 ## リスト差分管理
 
@@ -291,6 +291,24 @@ bounded live runを2回検証済みです。Twitterリスト変更はローカ�
 変更を送信するGitHub Actions workflowはありません。
 ローカルFTSはPOCとして実装済みです。2026-08-18の実archiveから93投稿を再構築し、
 日本語trigram、短語fallback、keyset paginationを検証済みです。
+
+## 宣言的なTwitterリスト管理（設計中）
+
+PRでカタログへアカウントを追加し、既存の非公開リストをTerraform plan/applyでexact syncする
+内部providerを設計しています。メンバーごとのresourceではなく、リスト全体の完全なmember ID集合を
+1つの`twitterrelay_list_membership_set` resourceとして扱います。これにより、完全な
+`ListMembers` snapshotを確認してからだけ管理外メンバーを削除できます。
+
+PR workflowはsecretなしでcatalog差分、provider build/test、HCL validateだけを行います。
+live planはmerge後のtrusted default-branch workflowだけがTailscale経由で行い、applyは
+catalog revisionを指定する手動workflowに分離します。version 1は既存リストのimport専用で、
+リスト作成・削除・名前変更や自動applyは行いません。
+
+判断は
+[`docs/adr/0004-manage-twitter-list-membership-with-a-provider.md`](docs/adr/0004-manage-twitter-list-membership-with-a-provider.md)、
+resource schema、state、Relay version lock、PR/plan/applyフロー、実装sliceは
+[`docs/design/terraform-twitter-list-provider.md`](docs/design/terraform-twitter-list-provider.md)
+に記載しています。現時点では設計のみで、providerとmutation workflowは未実装です。
 
 ### 収集pagination・pacing・backoff
 
