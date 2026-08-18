@@ -280,7 +280,8 @@ GitHub Actions
 データ形式、Git durability、障害復旧、pagination、backoff、ローカルFTSまで含む詳細は
 [`docs/design/archive-pipeline.md`](docs/design/archive-pipeline.md) に記載しています。
 
-`archive-collection-plan.yml`はsanitize済みの実行計画を作るだけです。
+`archive-collection-plan.yml`はsanitize済みの実行計画を作るだけです。Tailscaleや
+Environment secretsへアクセスせず、レビュー済みrequest catalog revisionとSHA-256を固定します。
 `archive-collection-live.yml`はdefault branch、Environment承認、static concurrencyの下で、
 trusted sourceと`archive` worktreeを分離してmanual収集できます。組み込み`GITHUB_TOKEN`の
 `contents: write`はarchiveへのappend pushに使い、Git設定と収集stepだけで`GH_TOKEN`として参照します。このworkflowはまだ

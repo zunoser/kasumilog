@@ -2,15 +2,10 @@ name: Archive collection plan
 
 on:
   workflow_dispatch:
-    inputs:
-      list_id:
-        description: Twitter list ID used only to validate request construction
-        required: true
-        type: string
-      request_catalog_revision:
-        description: 40-character commit SHA for upstream requests.ndjson
-        required: true
-        type: string
+
+env:
+  REQUEST_CATALOG_REVISION: a4d8b5f92874f593272e3c61427c61754cde6103
+  REQUEST_CATALOG_SHA256: 683a5951263e501ae02b8f6244ff0660d6b641cc0be9845741cb785881391311
 
 permissions:
   contents: read
@@ -21,10 +16,9 @@ concurrency:
 
 jobs:
   plan:
-    name: Verify Tailscale and build a Relay request plan
+    name: Build a Relay request plan without private network access
     if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
     runs-on: ubuntu-24.04
-    environment: archive-collection
     timeout-minutes: 10
     steps:
       - name: Check out trusted source
@@ -32,36 +26,27 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Join the existing tailnet
-        uses: tailscale/github-action@306e68a486fd2350f2bfc3b19fcd143891a4a2d8 # v4.1.2
-        with:
-          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
-          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
-          tags: tag:ci
-          ping: tw.home.yutakobayashi.com
-
       - name: Download the immutable request catalog revision
-        env:
-          CATALOG_REVISION: ${{ inputs.request_catalog_revision }}
         run: |
           set -euo pipefail
-          if [[ ! "$CATALOG_REVISION" =~ ^[0-9a-f]{40}$ ]]; then
-            echo "request_catalog_revision must be a 40-character commit SHA" >&2
-            exit 2
-          fi
           curl --fail --silent --show-error \
             --output "$RUNNER_TEMP/requests.ndjson" \
-            "https://raw.githubusercontent.com/fa0311/twitter_api_safe_relay_skills/$CATALOG_REVISION/skills/twitter-api-relay/requests.ndjson"
+            "https://raw.githubusercontent.com/fa0311/twitter_api_safe_relay_skills/$REQUEST_CATALOG_REVISION/skills/twitter-api-relay/requests.ndjson"
+          printf '%s  %s\n' "$REQUEST_CATALOG_SHA256" "$RUNNER_TEMP/requests.ndjson" \
+            | sha256sum --check --strict
 
       - name: Build the sanitized timeline plan without executing it
         env:
-          CATALOG_REVISION: ${{ inputs.request_catalog_revision }}
-          LIST_ID: ${{ inputs.list_id }}
+          LIST_ID: ${{ vars.TWITTER_ARCHIVE_LIST_ID }}
         run: |
           set -euo pipefail
+          if [[ -z "$LIST_ID" ]]; then
+            echo "TWITTER_ARCHIVE_LIST_ID is not configured" >&2
+            exit 2
+          fi
           node --experimental-strip-types src/cli.ts plan-timeline \
             --request-catalog "$RUNNER_TEMP/requests.ndjson" \
-            --revision "$CATALOG_REVISION" \
+            --revision "$REQUEST_CATALOG_REVISION" \
             --profile account2 \
             --list-id "$LIST_ID" \
             --json
