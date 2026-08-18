@@ -259,7 +259,8 @@ GitHub Actions
 ```
 
 - live収集は現在`workflow_dispatch`だけを受け付け、pull requestやscheduleにはTailscale secretを渡さない
-- `TS_OAUTH_CLIENT_ID`と`TS_OAUTH_SECRET`はrepository secretではなく、default branchだけを許可した`archive-collection-live` Environmentに置く
+- `TS_OAUTH_CLIENT_ID`と`TS_OAUTH_SECRET`はrepository secretではなく、`archive-collection-live` Environmentに置く
+- 現在のGitHub billing planはprivate repositoryのrequired reviewer、Environment branch policy、branch protectionを提供しないため、live workflowは`workflow_dispatch`とdefault-branch ref guardで制限する。より強いgateを用意するまでlive収集は実行しない
 - `TWITTER_ARCHIVE_LIST_ID`も同Environmentのvariableとして設定する
 - dotnixで宣言管理するkasumilog専用OAuth client、`tag:ci`、split DNSを使って実行ごとのephemeral nodeを作る
 - runnerは既存の`https://tw.home.yutakobayashi.com`へ直接接続し、新しい宅内forwarderやspoolを追加しない
@@ -269,7 +270,7 @@ GitHub Actions
 - ActionsがRelay呼び出しを逐次化し、30秒＋最大15秒jitter、pagination、backoffを管理する
 - responseを受けたActionsはraw CASとmanifestを先にarchive worktreeへ保存し、push後にだけ次のdurable frontierへ進む
 - runner再起動後のfrontierと待機期限は、archive branchへcommit済みのfetch/run manifestから復元する
-- protected `archive` branchの`data/raw`だけをappend-onlyで更新する
+- 専用`archive` branchの`data/raw`だけをappend-onlyで更新する
 - 正規化NDJSON、SQLite、FTS、exportはGitへ保存しない
 - 各利用者はprivate rawからSQLite/FTSをローカル再構築する
 - Twitter response schemaが変わってもrawを先に保存し、version付きparserを更新して再処理する
@@ -282,7 +283,7 @@ GitHub Actions
 
 `archive-collection-plan.yml`はsanitize済みの実行計画を作るだけです。Tailscaleや
 Environment secretsへアクセスせず、レビュー済みrequest catalog revisionとSHA-256を固定します。
-`archive-collection-live.yml`はdefault branch、Environment承認、static concurrencyの下で、
+`archive-collection-live.yml`はdefault branch ref guard、Environment secret分離、static concurrencyの下で、
 trusted sourceと`archive` worktreeを分離してmanual収集できます。組み込み`GITHUB_TOKEN`の
 `contents: write`はarchiveへのappend pushに使い、Git設定と収集stepだけで`GH_TOKEN`として参照します。このworkflowはまだ
 実行しておらず、scheduleもありません。Twitterリスト変更はローカルのexact syncで実行済みですが、

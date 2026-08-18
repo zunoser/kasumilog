@@ -47,14 +47,12 @@ Private means access-controlled, not harmless. A collaborator can clone all
 history. The repository therefore has these rules:
 
 - `main` contains code and the catalog;
-- protected `archive` contains append-only `data/raw` history;
-- force push and branch deletion are disabled;
+- dedicated `archive` contains append-only `data/raw` history;
 - Actions execute trusted default-branch code only;
 - live collection currently has only a `workflow_dispatch` trigger;
 - pull-request code never receives the Tailscale identity or write token;
 - Tailscale OAuth and archive push secrets live only in the
-  `archive-collection-live` Environment,
-  whose deployment branch rule permits only the default branch;
+  `archive-collection-live` Environment;
 - third-party actions are pinned to full commit SHAs;
 - workflow logs, summaries, and artifacts never contain raw bodies, cursors,
   cookies, or headers.
@@ -71,11 +69,12 @@ home process, forwarder, spool, cursor, or archive state.
 The current tailnet identity can reach the complete Relay; Tailscale does not
 enforce an HTTP path or GraphQL operation allowlist. Therefore only trusted
 default-branch workflows receive the Tailscale secrets. The workflow checks its
-ref, and the `archive-collection-live` GitHub Environment independently restricts
-deployment to the default branch. The OAuth values must not also exist as
-repository-level secrets. Pull-request code receives neither. A future tighter
-tag or Grant would be defense in depth, but is not a prerequisite for the
-direct topology selected here.
+ref and accepts only `workflow_dispatch`. The current GitHub billing plan does
+not provide required reviewers, Environment branch policies, or branch
+protection for this private repository, so live collection remains disabled
+until a stronger external gate or a supporting plan is available. The OAuth
+values must not also exist as repository-level secrets. Pull-request code
+receives neither.
 
 ### Direct HTTPS Relay access
 
@@ -269,7 +268,7 @@ does not automatically delete evidence.
 
 ## 6. Git archive branch
 
-The archive writer accepts a worktree on the protected `archive` branch and
+The archive writer accepts a worktree on the dedicated `archive` branch and
 passes `data/raw` as the storage root. For each page it performs:
 
 ```text
@@ -358,9 +357,10 @@ The Action is authoritative for collection control:
 - one Relay request in flight globally;
 - 30 seconds plus zero to 15 seconds jitter after every response;
 - workflow concurrency permits only one collector;
-- live collection is manual-only and gated by the `archive-collection-live`
-  Environment; it has no schedule or pull-request trigger;
-- trusted source and the protected `archive` branch use separate checkouts;
+- live collection is manual-only, reads secrets from the
+  `archive-collection-live` Environment, and has no schedule or pull-request
+  trigger;
+- trusted source and the dedicated `archive` branch use separate checkouts;
 - the collection job grants its built-in `GITHUB_TOKEN` `contents: write` for
   append-only archive pushes. It is exposed as `GH_TOKEN` only to Git setup and
   the collector step; the job-scoped permission is documented inline;
@@ -465,11 +465,10 @@ Implementation is not complete until tests prove:
 
 ## 13. Remaining implementation order
 
-1. Create and protect the real private `archive` branch and configure its
-   independent backup.
-2. Configure `archive-collection-live` with required reviewers, default-branch
-   deployment restriction, Tailscale secrets, and the existing list ID variable.
-3. Manually approve and run the implemented workflow against one head page,
+1. Configure an independent backup for the real private `archive` branch.
+2. Add a live-execution gate outside the unsupported private-repository
+   Environment and branch-protection features, or move to a supporting plan.
+3. Manually run the implemented workflow against one head page,
    then inspect committed fetch/run manifests before adding any schedule.
 4. Exercise the local FTS POC against the first real raw archive
    and optimize only if measurements require it.

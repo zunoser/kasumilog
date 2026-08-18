@@ -80,10 +80,11 @@ the effective-template SHA-256.
 
 ### Raw data alone is committed
 
-The private repository uses a dedicated protected `archive` branch for
-`data/raw`. Collection commits append-only objects and manifests to that
-branch. Force pushes, branch deletion, and replacement of an existing fetch ID
-or CAS object are forbidden.
+The private repository uses a dedicated `archive` branch for `data/raw`.
+Collection commits append-only objects and manifests to that branch. The
+collector forbids replacement of an existing fetch ID or CAS object. Force
+pushes and branch deletion remain operationally forbidden but cannot be
+enforced by the current GitHub billing plan.
 
 The following are local disposable projections and are ignored by Git:
 
@@ -134,11 +135,14 @@ time from committed archive manifests.
 The current tailnet identity can technically reach the full Relay, including
 routes outside the collector allowlist. That trust is accepted for this direct
 topology: Tailscale secrets are available only to trusted default-branch
-workflows through an `archive-collection-live` GitHub Environment whose deployment
-branch rule allows only the default branch. The OAuth values are not duplicated
-as repository-level secrets and are never available to pull-request code. Twitter
-mutations remain absent from live collection code and use a separate,
-explicitly invoked exact-sync CLI.
+workflows through an `archive-collection-live` GitHub Environment. The current
+private-repository billing plan does not provide Environment branch policies,
+required reviewers, or branch protection, so `workflow_dispatch` and the
+default-branch ref guard are the available in-repository checks and live
+collection remains disabled pending a stronger gate. The OAuth values are not
+duplicated as repository-level secrets and are never available to pull-request
+code. Twitter mutations remain absent from live collection code and use a
+separate, explicitly invoked exact-sync CLI.
 
 ## Consequences
 
