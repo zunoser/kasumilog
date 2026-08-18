@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "runId": "timeline-cbc2e166-822d-467a-af4f-52fbf03aedd2",
+  "source": {
+    "kind": "list_timeline",
+    "listId": "2089423174601670906"
+  },
+  "status": "failed",
+  "stopReason": "decode_error",
+  "pages": [],
+  "catalogRevision": "e649dba667157873b8d07ec0382ce0982175153ffc9aa6cc2a6f4b540abaf1e1",
+  "listRevision": "4a3c4e7b95a4e7efc6e3d94484a19d84a44335f135bc743f59607954bfa2b227",
+  "startedAt": "2026-08-18T12:03:45.839Z",
+  "finishedAt": "2026-08-18T12:03:51.198Z"
+}
