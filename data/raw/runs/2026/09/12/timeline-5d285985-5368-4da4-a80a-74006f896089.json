@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "runId": "timeline-5d285985-5368-4da4-a80a-74006f896089",
+  "source": {
+    "kind": "list_timeline",
+    "listId": "2089423174601670906"
+  },
+  "status": "complete",
+  "stopReason": "frontier_reached",
+  "pages": [
+    {
+      "page": 0,
+      "fetchId": "timeline-3b3c6f2d-9b7e-49c4-a554-4de86e001cf4",
+      "verifiedCommit": "0a6ff28b2d5fdd50470f788615497db62783f360"
+    }
+  ],
+  "coverageFrontier": {
+    "publishedAt": "2026-09-12T07:29:05.000Z",
+    "tweetIds": [
+      "2098675247713051017"
+    ]
+  },
+  "catalogRevision": "99a1802886a2fb8167b121b7377d2b3a15dc5f028e1e66da1dda850e17b39408",
+  "listRevision": "4a3c4e7b95a4e7efc6e3d94484a19d84a44335f135bc743f59607954bfa2b227",
+  "startedAt": "2026-09-12T22:21:46.548Z",
+  "finishedAt": "2026-09-12T22:21:54.255Z",
+  "lastVerifiedPageCommit": "0a6ff28b2d5fdd50470f788615497db62783f360"
+}
