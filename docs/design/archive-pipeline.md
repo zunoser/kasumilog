@@ -51,7 +51,7 @@ history. The repository therefore has these rules:
 - Actions execute trusted default-branch code only;
 - live collection has only an hourly `schedule` and `workflow_dispatch` trigger;
 - pull-request code never receives the Tailscale identity or write token;
-- Tailscale OAuth and archive push secrets live only in the
+- Tailscale authentication secrets live only in the
   `archive-collection-live` Environment;
 - third-party actions are pinned to full commit SHAs;
 - workflow logs, summaries, and artifacts never contain raw bodies, cursors,
@@ -59,10 +59,14 @@ history. The repository therefore has these rules:
 
 ### Tailscale
 
-Use the kasumilog-specific OAuth client declared by dotnix to create an
-ephemeral `tag:ci` node. The generated client ID and secret are copied once to
-the `archive-collection-live` Environment; they are not synchronized by another
-provider. The tailnet split DNS resolves `tw.home.yutakobayashi.com`, whose
+Use a kasumilog-specific, ephemeral, reusable, pre-approved auth key tagged
+`tag:ci`, signed by a trusted Tailnet Lock signing node. Store the resulting
+wrapped key as `TS_AUTHKEY` in the `archive-collection-live` Environment.
+Tailnet Lock signatures are created on a trusted signing node, outside Terraform.
+The Action stores its Tailnet Key Authority state outside both checkouts, at
+`${{ github.workspace }}/../tailscale-state`; do not cache or upload that
+directory. The Action logs out and stops Tailscale in its post-job hook, and
+the GitHub-hosted runner is discarded after the job. The tailnet split DNS resolves `tw.home.yutakobayashi.com`, whose
 existing Traefik route exposes the Twitter Relay over HTTPS. kasumilog adds no
 home process, forwarder, spool, cursor, or archive state.
 
@@ -73,9 +77,33 @@ ref and accepts only the hourly `schedule` or `workflow_dispatch`. The current
 GitHub billing plan does not provide required reviewers, Environment branch
 policies, or branch protection for this private repository, so the
 default-branch guard, limited triggers, static concurrency, and read-only Relay
-client are the active controls. The OAuth
-values must not also exist as repository-level secrets. Pull-request code
-receives neither.
+client are the active controls. `TS_AUTHKEY` must not also exist as a
+repository-level secret. Pull-request code receives no tailnet credentials.
+
+### Tailnet Lock cutover and key rotation
+
+1. Prepare this workflow change, then disable the live workflow and wait for
+   active collection jobs to finish before initializing Tailnet Lock.
+2. On a trusted signing node, sign the dedicated auth key. Keep the signed key
+   out of logs, Git, and temporary files; install it directly as the Environment
+   secret `TS_AUTHKEY`. Keep the disablement secret in the operator's password
+   manager, separate from GitHub Secrets.
+3. Publish the workflow change, re-enable the live workflow, and dispatch one
+   run from `main`. Verify `Join the existing tailnet` including the Relay ping,
+   then inspect collection and archive verification independently. The plan and
+   fixture workflows do not test tailnet connectivity.
+4. Remove the retired OAuth Environment secrets after successful migration.
+
+Before the auth key expires, generate and sign a replacement, update
+`TS_AUTHKEY`, and verify a fresh run before revoking the old auth key. A wrapped
+auth key contains a private signing key: when retiring it, also remove its
+associated trusted signing key using `tailscale lock remove` on a trusted node.
+Revoking the auth key alone does not remove that trust. Record the associated
+public signing key when provisioning so it can be identified for retirement.
+
+If the new key fails, keep collection disabled while replacing or re-signing it.
+Do not disable Tailnet Lock as a routine credential rollback. Scheduled and
+manual live runs fetch real Relay data and can append to the `archive` branch.
 
 ### Direct HTTPS Relay access
 
