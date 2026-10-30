@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "runId": "timeline-19b566bf-1612-4649-8212-232e01759f24",
+  "source": {
+    "kind": "list_timeline",
+    "listId": "2089423174601670906"
+  },
+  "status": "complete",
+  "stopReason": "frontier_reached",
+  "pages": [
+    {
+      "page": 0,
+      "fetchId": "timeline-999c55c7-d5c6-4ebb-8119-50047e7fd4f2",
+      "verifiedCommit": "562c847a638c8b6f5418b02251e2f61465b93f6e"
+    },
+    {
+      "page": 1,
+      "fetchId": "timeline-3312813a-2d09-4c9b-9333-3e5b5e3ba5c6",
+      "verifiedCommit": "ef28b905ae2caf5a99554ff5a73ec7e8517ddb71"
+    },
+    {
+      "page": 2,
+      "fetchId": "timeline-cf92fa2a-fe97-4273-a802-f5c83db543de",
+      "verifiedCommit": "e48f4d104674d2748a8a386394048818836ef697"
+    },
+    {
+      "page": 3,
+      "fetchId": "timeline-15e8df34-d6c9-456c-ae55-238c6dbdbce4",
+      "verifiedCommit": "3fba79346d5c67809b6640cb16f55d34390a9620"
+    },
+    {
+      "page": 4,
+      "fetchId": "timeline-6b1d5e7d-4f7f-41d1-9341-945bdbb89a7c",
+      "verifiedCommit": "ec023bb44333a4b5f3c4055bc87a42be16591ad1"
+    }
+  ],
+  "coverageFrontier": {
+    "publishedAt": "2026-10-30T21:00:01.000Z",
+    "tweetIds": [
+      "2116273945699635244"
+    ]
+  },
+  "catalogRevision": "99a1802886a2fb8167b121b7377d2b3a15dc5f028e1e66da1dda850e17b39408",
+  "listRevision": "4a3c4e7b95a4e7efc6e3d94484a19d84a44335f135bc743f59607954bfa2b227",
+  "startedAt": "2026-10-30T21:30:07.591Z",
+  "finishedAt": "2026-10-30T21:33:01.866Z",
+  "lastVerifiedPageCommit": "ec023bb44333a4b5f3c4055bc87a42be16591ad1"
+}
