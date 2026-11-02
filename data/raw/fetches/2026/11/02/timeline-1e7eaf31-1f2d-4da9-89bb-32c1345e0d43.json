@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "fetchId": "timeline-1e7eaf31-1f2d-4da9-89bb-32c1345e0d43",
+  "runId": "timeline-8830c1fd-7b7b-4a49-bb61-830387dea015",
+  "page": 1,
+  "attempt": 1,
+  "source": {
+    "kind": "list_timeline",
+    "listId": "2089423174601670906"
+  },
+  "request": {
+    "operation": "ListLatestTweetsTimeline",
+    "profileName": "account2",
+    "requestCatalog": {
+      "source": "https://github.com/fa0311/twitter_api_safe_relay_skills/blob/main/skills/twitter-api-relay/requests.ndjson",
+      "revision": "a4d8b5f92874f593272e3c61427c61754cde6103",
+      "contentSha256": "683a5951263e501ae02b8f6244ff0660d6b641cc0be9845741cb785881391311",
+      "overridesSha256": "fab6993fc45fad7a7f55ad886ae3da49ab681f6494747e03a693eaed22ff9ae3"
+    },
+    "requestTemplateSha256": "3c5d3bebbb4b049b3285bcea4c09fe0faee5496adc7777327e1b14f91dd80434",
+    "variablesSha256": "f7d3915834e0d1bd5e38038a7b3579c8551fbcb9959ab514bfc8318c55b05709",
+    "cursorIn": "DAABCgABHWHYhSw__6cKAAIdYWLMM9rBiAgAAwAAAAIAAA"
+  },
+  "response": {
+    "captureLevel": "relay-response-body-v1",
+    "status": 200,
+    "headers": {
+      "content-type": "application/json",
+      "date": "Mon, 02 Nov 2026 11:05:49 GMT"
+    },
+    "excludedHeaderNames": [
+      "content-length"
+    ],
+    "bodySha256": "7e74778baa9593300b47c659de05f6cf8163266264fe5fbfefc2488d0fbd7fec",
+    "bodyBytes": 887027,
+    "storagePath": "objects/sha256/7e/7e74778baa9593300b47c659de05f6cf8163266264fe5fbfefc2488d0fbd7fec.bin"
+  },
+  "catalogRevision": "99a1802886a2fb8167b121b7377d2b3a15dc5f028e1e66da1dda850e17b39408",
+  "listRevision": "4a3c4e7b95a4e7efc6e3d94484a19d84a44335f135bc743f59607954bfa2b227",
+  "requestedAt": "2026-11-02T11:05:45.934Z",
+  "receivedAt": "2026-11-02T11:05:50.296Z"
+}
