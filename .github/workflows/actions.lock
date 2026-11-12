@@ -3,8 +3,6 @@
 # Docs: https://gh.io/actions-lockfile
 version: 'v0.0.3'
 workflows:
-    '.github/workflows/actions-lock.yml':
-        - 'actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd'
     '.github/workflows/archive-collection-live.yml':
         - 'actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0'
         - 'tailscale/github-action@306e68a486fd2350f2bfc3b19fcd143891a4a2d8'
